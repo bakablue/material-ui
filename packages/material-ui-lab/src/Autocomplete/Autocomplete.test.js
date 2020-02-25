@@ -350,6 +350,31 @@ describe('<Autocomplete />', () => {
       expect(handleOpen.callCount).to.equal(1);
     });
 
+    it('clears the chips if Escape is pressed', () => {
+      const handleClose = spy();
+      const handleInputChange = spy();
+      const { getByRole } = render(
+        <Autocomplete
+          {...defaultProps}
+          onInputChange={handleInputChange}
+          multiple
+          disableOpenOnFocus
+          clearOnEscape
+          renderInput={params => <TextField {...params} autoFocus />}
+        />,
+      );
+
+      fireEvent.change(document.activeElement, { target: { value: 'a' } });
+
+      fireEvent.keyDown(document.activeElement, { key: 'Escape' });
+
+      expect(handleInputChange.callCount).to.equal(1);
+      expect(handleInputChange.args[0][1]).to.equal('');
+      expect(handleInputChange.args[0][2]).to.equal('clear');
+
+      expect(handleClose.callCount).to.equal(1);
+    });
+
     it('does not open on clear', () => {
       const handleOpen = spy();
       const handleChange = spy();
